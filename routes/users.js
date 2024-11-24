@@ -39,26 +39,50 @@ router.post('/register',
 
 
 
-router.post('/login',
-  validator.login_validator(),
-  userController.login,
-  commonController.send_otp_mail,
-  function (req, res, _next) {
-    if (req.response.status == true) {
-      const respone = {
-        succes: true,
-        data: {
-          message: req.response.message,
-          user: req.response.user_details,
-          access: req.response.access_token
+  router.post('/login', 
+    validator.login_validator(),  // Request validation
+    async (req, res, next) => {
+      try {
+        // Step 1: Validate user credentials using the login validator
+        const userLoginResult = await userController.login(req, res);
+        
+        if (!userLoginResult || userLoginResult.status !== true) {
+          // If login fails, return 400 with an appropriate message
+          return res.status(400).json(userLoginResult || { status: false, message: "Invalid credentials" });
         }
-
+  
+        // Step 2: Generate tokens (access token, refresh token)
+        const generateTokens = (user) => {
+          const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+          return {
+            'x-access-token': jwt.sign({ email: user.email, user_id: user.user_id }, config.jwt_secret, { expiresIn: "24h" }),
+            'refresh-token': jwt.sign({ email: user.email, user_id: user.user_id }, config.jwt_secret, { expiresIn: "24000000h" }),
+            'token_expiry': tokenExpiry.toISOString(),
+          };
+        };
+  
+        // Step 3: Construct the successful response with tokens
+        const response = {
+          success: true,
+          data: {
+            message: "Login Successful",
+            user: req.response.user_details,
+            access: generateTokens(req.response.user_details),
+          },
+        };
+  
+        // Send the response
+        res.status(200).json(response);
+        
+      } catch (err) {
+        console.error("Error during login process:", err);
+        // General error handler
+        res.status(500).json({ success: false, message: "Internal Server Error", error: err.message });
       }
-      res.status(200).json(respone);
-    } else {
-      res.status(400).json(req.response);
     }
-  });
+  );
+  
+  
 
 router.post('/forgot_password',
   validator.forgot_password_validator(),

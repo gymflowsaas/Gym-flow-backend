@@ -346,6 +346,7 @@ let handler = {
   async login(req, res, next) {
     try {
       console.log("Validating request...");
+  
       // Validate request
       validationResult(req).throw();
       console.log("Request validation passed.");
@@ -393,26 +394,7 @@ let handler = {
         };
       };
   
-      if (user_data.account_verified === "N") {
-        // Account verification needed
-        console.log("User account not verified. Generating OTP for:", user_data.email);
-        const otp = Math.floor(1000 + Math.random() * 9000); // Generate OTP
-        await functions.update("users", { otp }, { email: req.body.email });
-        console.log("OTP generated and updated in database for user:", user_data.email);
-  
-        req.response.status = true;
-        req.response.message = "Please verify your account";
-        req.response.user = {
-          otp,
-          user_id: user_data.id,
-          email: user_data.email,
-          verification_pending: true,
-        };
-        req.response.access_token = generateTokens(user_data.email, user_data.user_id);
-        return next();
-      }
-  
-      // Successful login response
+      // Successful login response (No OTP generation now)
       console.log("Login successful for user:", user_data.email);
       req.response.status = true;
       req.response.message = "Login Successful";
@@ -427,6 +409,7 @@ let handler = {
         profile_image: user_data.profile_image,
       };
       req.response.access_token = generateTokens(user_data.email, user_data.user_id);
+  
       next();
     } catch (errors) {
       console.error("An error occurred during login:", errors);
