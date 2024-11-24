@@ -227,119 +227,217 @@ let handler = {
       next();
     }
   },
+
+  
+  // async login(req, res, next) {
+  //   try {
+  //     validationResult(req).throw();
+
+  //     await functions
+  //       .get("users", { email: req.body.email })
+  //       .then((result) => {
+  //         var user_data = result[0];
+
+  //         if (Password.verify(req.body.password, user_data.password)) {
+  //           // check if password is correct
+
+  //           if (user_data.is_blocked == "Y") {
+  //             throw {
+  //               errors: [{ msg: "Account blocked" }],
+  //             };
+  //           }
+  //           if (user_data.is_deleted == "Y") {
+  //             throw {
+  //               errors: [{ msg: "Account deleted" }],
+  //             };
+  //           }
+
+  //           if (user_data.account_verified == "N") {
+  //             // check if user verified
+  //             const otp = Math.floor(1000 + Math.random() * 9000); // step 2 otp generation
+  //             functions
+  //               .update("users", { otp: otp }, { email: req.body.email })
+  //               .then(() => {
+  //                 req.response.status = true;
+  //                 req.response.message = "Please verify your account";
+  //                 req.response.user = {
+  //                   otp,
+  //                   user_id: user_data.id,
+  //                   email: user_data.email,
+  //                   verification_pending: true
+  //                 }
+
+  //                 const newtoken = jwt.sign(
+  //                   { email: user_data.email, user_id: user_data.user_id },
+  //                   config.jwt_secret,
+  //                   {
+  //                     expiresIn: "24h",
+  //                   }
+  //                 );
+  //                 const newrefreshtoken = jwt.sign(
+  //                   { email: user_data.email, user_id: user_data.user_id },
+  //                   config.jwt_secret,
+  //                   {
+  //                     expiresIn: "24000000h",
+  //                   }
+  //                 );
+  //                 const tokenExpiry = new Date(new Date().getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+  //                 req.response.access_token = {
+  //                   'x-access-token': newtoken,
+  //                   'refresh-token': newrefreshtoken,
+  //                   'token_expiry': tokenExpiry.toISOString(),
+  //                 }
+
+  //                 next();
+  //               });
+  //             return false;
+  //           }
+
+  //           req.response.status = true;
+  //           req.response.message = "Login Successfull";
+  //           req.response.user_details = {
+  //             user_id: user_data.user_id,
+  //             first_name: user_data.first_name,
+  //             last_name: user_data.last_name,
+  //             phone_prefix: user_data.phone_prefix,
+  //             phone: user_data.phone,
+  //             verification_status: user_data.verification_status,
+  //             email: user_data.email,
+  //             profile_image: user_data.profile_image
+  //           };
+  //           const newtoken = jwt.sign(
+  //             { email: result[0].email, user_id: user_data.user_id },
+  //             config.jwt_secret,
+  //             {
+  //               expiresIn: "24h",
+  //             }
+  //           );
+  //           const newrefreshtoken = jwt.sign(
+  //             { email: result[0].email, user_id: user_data.user_id },
+  //             config.jwt_secret,
+  //             {
+  //               expiresIn: "24000000h",
+  //             }
+  //           );
+  //           const tokenExpiry = new Date(new Date().getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+  //           req.response.access_token = {
+  //             'x-access-token': newtoken,
+  //             'refresh-token': newrefreshtoken,
+  //             'token_expiry': tokenExpiry.toISOString(),
+  //           }
+  //           next();
+  //         } else {
+  //           req.response.status = false;
+  //           req.response.message = "Incorrect Password";
+  //           req.response.user_details = {};
+  //           next();
+  //         }
+  //       });
+  //   } catch (errors) {
+  //     console.log(errors);
+  //     var error = errors.errors[0];
+  //     req.response.status = false;
+  //     req.response.message = error.msg;
+  //     next();
+  //   }
+  // },
+
+
   async login(req, res, next) {
     try {
+      console.log("Validating request...");
+      // Validate request
       validationResult(req).throw();
-
-      await functions
-        .get("users", { email: req.body.email })
-        .then((result) => {
-          var user_data = result[0];
-
-          if (Password.verify(req.body.password, user_data.password)) {
-            // check if password is correct
-
-            if (user_data.is_blocked == "Y") {
-              throw {
-                errors: [{ msg: "Account blocked" }],
-              };
-            }
-            if (user_data.is_deleted == "Y") {
-              throw {
-                errors: [{ msg: "Account deleted" }],
-              };
-            }
-
-            if (user_data.account_verified == "N") {
-              // check if user verified
-              const otp = Math.floor(1000 + Math.random() * 9000); // step 2 otp generation
-              functions
-                .update("users", { otp: otp }, { email: req.body.email })
-                .then(() => {
-                  req.response.status = true;
-                  req.response.message = "Please verify your account";
-                  req.response.user = {
-                    otp,
-                    user_id: user_data.id,
-                    email: user_data.email,
-                    verification_pending: true
-                  }
-
-                  const newtoken = jwt.sign(
-                    { email: user_data.email, user_id: user_data.user_id },
-                    config.jwt_secret,
-                    {
-                      expiresIn: "24h",
-                    }
-                  );
-                  const newrefreshtoken = jwt.sign(
-                    { email: user_data.email, user_id: user_data.user_id },
-                    config.jwt_secret,
-                    {
-                      expiresIn: "24000000h",
-                    }
-                  );
-                  const tokenExpiry = new Date(new Date().getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-                  req.response.access_token = {
-                    'x-access-token': newtoken,
-                    'refresh-token': newrefreshtoken,
-                    'token_expiry': tokenExpiry.toISOString(),
-                  }
-
-                  next();
-                });
-              return false;
-            }
-
-            req.response.status = true;
-            req.response.message = "Login Successfull";
-            req.response.user_details = {
-              user_id: user_data.user_id,
-              first_name: user_data.first_name,
-              last_name: user_data.last_name,
-              phone_prefix: user_data.phone_prefix,
-              phone: user_data.phone,
-              verification_status: user_data.verification_status,
-              email: user_data.email,
-              profile_image: user_data.profile_image
-            };
-            const newtoken = jwt.sign(
-              { email: result[0].email, user_id: user_data.user_id },
-              config.jwt_secret,
-              {
-                expiresIn: "24h",
-              }
-            );
-            const newrefreshtoken = jwt.sign(
-              { email: result[0].email, user_id: user_data.user_id },
-              config.jwt_secret,
-              {
-                expiresIn: "24000000h",
-              }
-            );
-            const tokenExpiry = new Date(new Date().getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-            req.response.access_token = {
-              'x-access-token': newtoken,
-              'refresh-token': newrefreshtoken,
-              'token_expiry': tokenExpiry.toISOString(),
-            }
-            next();
-          } else {
-            req.response.status = false;
-            req.response.message = "Incorrect Password";
-            req.response.user_details = {};
-            next();
-          }
-        });
+      console.log("Request validation passed.");
+  
+      // Fetch user data
+      console.log("Fetching user data for email:", req.body.email);
+      const result = await functions.get("users", { email: req.body.email });
+      if (!result || result.length === 0) {
+        console.error("User not found:", req.body.email);
+        throw { errors: [{ msg: "User not found" }] };
+      }
+  
+      const user_data = result[0];
+      console.log("User data fetched:", user_data);
+  
+      // Verify password
+      console.log("Verifying password for user:", user_data.email);
+      if (!Password.verify(req.body.password, user_data.password)) {
+        console.error("Password verification failed for user:", user_data.email);
+        req.response.status = false;
+        req.response.message = "Incorrect Password";
+        req.response.user_details = {};
+        return next();
+      }
+      console.log("Password verified for user:", user_data.email);
+  
+      // Check user account status
+      if (user_data.is_blocked === "Y") {
+        console.error("User account is blocked:", user_data.email);
+        throw { errors: [{ msg: "Account blocked" }] };
+      }
+      if (user_data.is_deleted === "Y") {
+        console.error("User account is deleted:", user_data.email);
+        throw { errors: [{ msg: "Account deleted" }] };
+      }
+  
+      // Helper function to generate JWT tokens
+      const generateTokens = (email, user_id) => {
+        const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+        console.log("Generating tokens for user:", email);
+        return {
+          'x-access-token': jwt.sign({ email, user_id }, config.jwt_secret, { expiresIn: "24h" }),
+          'refresh-token': jwt.sign({ email, user_id }, config.jwt_secret, { expiresIn: "24000000h" }),
+          'token_expiry': tokenExpiry.toISOString(),
+        };
+      };
+  
+      if (user_data.account_verified === "N") {
+        // Account verification needed
+        console.log("User account not verified. Generating OTP for:", user_data.email);
+        const otp = Math.floor(1000 + Math.random() * 9000); // Generate OTP
+        await functions.update("users", { otp }, { email: req.body.email });
+        console.log("OTP generated and updated in database for user:", user_data.email);
+  
+        req.response.status = true;
+        req.response.message = "Please verify your account";
+        req.response.user = {
+          otp,
+          user_id: user_data.id,
+          email: user_data.email,
+          verification_pending: true,
+        };
+        req.response.access_token = generateTokens(user_data.email, user_data.user_id);
+        return next();
+      }
+  
+      // Successful login response
+      console.log("Login successful for user:", user_data.email);
+      req.response.status = true;
+      req.response.message = "Login Successful";
+      req.response.user_details = {
+        user_id: user_data.user_id,
+        first_name: user_data.first_name,
+        last_name: user_data.last_name,
+        phone_prefix: user_data.phone_prefix,
+        phone: user_data.phone,
+        verification_status: user_data.verification_status,
+        email: user_data.email,
+        profile_image: user_data.profile_image,
+      };
+      req.response.access_token = generateTokens(user_data.email, user_data.user_id);
+      next();
     } catch (errors) {
-      console.log(errors);
-      var error = errors.errors[0];
+      console.error("An error occurred during login:", errors);
+      const error = errors.errors?.[0] || { msg: "An error occurred" };
       req.response.status = false;
       req.response.message = error.msg;
       next();
     }
   },
-
+  
+  
   async forgot_password(req, res, next) {
     try {
       validationResult(req).throw();
