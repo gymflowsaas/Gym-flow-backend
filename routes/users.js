@@ -21,7 +21,7 @@ router.post('/register',
   function (req, res, _next) {
     if (req.response && req.response.status === true) {
       const respone = {
-        succes: true,
+        success: true,
         data: {
           message: req.response.message,
           user: req.response.user,
@@ -46,7 +46,7 @@ router.post('/login',
   function (req, res, _next) {
     if (req.response.status == true) {
       const respone = {
-        succes: true,
+        success: true,
         data: {
           message: req.response.message,
           user: req.response.user_details,
@@ -77,7 +77,7 @@ router.post('/verify_forgot_otp',
   function (req, res, next) {
     if (req.response.status == true) {
       const resp = {
-        succes: true,
+        success: true,
         data: {
           message: req.response.message,
 

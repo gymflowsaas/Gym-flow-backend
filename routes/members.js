@@ -79,7 +79,7 @@ router.post('/add-member',
   function (req, res, _next) {
     if (req.response && req.response.status === true) {
       const respone = {
-        succes: true,
+        success: true,
         data: {
           message: req.response.message,
           member: req.response.member,
