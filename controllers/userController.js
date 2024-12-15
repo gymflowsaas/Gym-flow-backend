@@ -237,6 +237,9 @@ let handler = {
         .get("users", { email: req.body.email })
         .then((result) => {
           var user_data = result[0];
+
+
+          console.log("datas id ",user_data);
   
           if (Password.verify(req.body.password, user_data.password)) {
             // Check if password is correct
@@ -256,7 +259,7 @@ let handler = {
             req.response.status = true;
             req.response.message = "Login Successful";
             req.response.user_details = {
-              user_id: user_data.user_id,
+              user_id: user_data.id,
               first_name: user_data.first_name,
               last_name: user_data.last_name,
               phone_prefix: user_data.phone_prefix,
@@ -265,6 +268,7 @@ let handler = {
               email: user_data.email,
               profile_image: user_data.profile_image,
               gym_name:user_data.gym_name,
+              gym_admin_id:user_data.id
             };
   
             const newtoken = jwt.sign(
