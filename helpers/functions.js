@@ -182,7 +182,7 @@ let functions = {
           if (!isEmailTemplate) {
             var mailOptions = {
               from:
-                '"' + Fitbilsass + '" <' + config.smtp_user + '>',
+                '"' + Gymflow + '" <' + config.smtp_user + '>',
               to: to,
               subject: subject,
               html: email
@@ -205,7 +205,7 @@ let functions = {
 
             const mailOptions = {
               from:
-                '"' + 'Fitbilsass' + '" <' + config.smtp_user + '>',
+                '"' + 'Gymflow' + '" <' + config.smtp_user + '>',
               to: to,
               subject: subject,
               html: template
