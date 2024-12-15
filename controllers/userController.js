@@ -80,6 +80,8 @@ let handler = {
         password: enc_pass,
         otp: otp,
         device_token: req.body.device_token || "",
+        gym_name:req.body.gym_name,
+        address:req.body.address,
         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
         updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
       };
@@ -262,6 +264,7 @@ let handler = {
               verification_status: user_data.verification_status,
               email: user_data.email,
               profile_image: user_data.profile_image,
+              gym_name:user_data.gym_name,
             };
   
             const newtoken = jwt.sign(
